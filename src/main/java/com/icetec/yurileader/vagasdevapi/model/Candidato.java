@@ -4,7 +4,9 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "CANDIDATO")
@@ -22,14 +24,16 @@ public class Candidato {
     private Long id;
 
     @NotNull
+    @Size(min = 3, max = 70)
     @Column(name = "NOME", nullable = false)
     private String nome;
 
     @NotNull
+    @Size(max = 100)
     @Column(name = "EMAIL", nullable = false)
     private String email;
 
-    @NotNull
+    @Size(min = 8, max = 20)
     @Column(name = "TELEFONE")
     private String telefone;
 
@@ -37,12 +41,18 @@ public class Candidato {
     @Column(name = "DATA_NASCIMENTO", nullable = false)
     private LocalDate dataNascimento;
 
+    @Size(max = 100)
     @Column(name = "URL_LINKEDIN")
     private String urlLinkedin;
 
+    @Size(max = 100)
     @Column(name = "URL_GITHUB")
     private String urlGithub;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "CANDIDATO_TECNOLOGIA", joinColumns = @JoinColumn(name = "ID_CANDIDATO"),
+    inverseJoinColumns = @JoinColumn(name = "ID_TECNOLOGIA"))
+    private List<Tecnologia> tecnologia;
 
 }
 
