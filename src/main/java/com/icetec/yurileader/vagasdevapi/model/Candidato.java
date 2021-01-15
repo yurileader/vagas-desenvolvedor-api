@@ -1,9 +1,9 @@
 package com.icetec.yurileader.vagasdevapi.model;
 
-import com.sun.istack.Nullable;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
@@ -21,15 +21,19 @@ public class Candidato {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @NotNull
     @Column(name = "NOME", nullable = false)
     private String nome;
 
+    @NotNull
     @Column(name = "EMAIL", nullable = false)
     private String email;
 
+    @NotNull
     @Column(name = "TELEFONE")
     private String telefone;
 
+    @NotNull
     @Column(name = "DATA_NASCIMENTO", nullable = false)
     private LocalDate dataNascimento;
 

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -34,7 +35,7 @@ public class CandidatoController {
     }
 
     @PostMapping
-    public ResponseEntity<Candidato> criar(@RequestBody Candidato candidato, HttpServletResponse response) {
+    public ResponseEntity<Candidato> criar(@Valid @RequestBody Candidato candidato, HttpServletResponse response) {
         Candidato categoriaSalva = candidatoRepository.save(candidato);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
@@ -45,7 +46,7 @@ public class CandidatoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Candidato> atualizar (@PathVariable Long id){
+    public ResponseEntity<Candidato> atualizar(@Valid @PathVariable Long id) {
         Optional<Candidato> byId = candidatoRepository.findById(id);
 
         return null;
@@ -54,7 +55,7 @@ public class CandidatoController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void excluir(@PathVariable Long id){
+    public void excluir(@PathVariable Long id) {
         candidatoRepository.deleteById(id);
     }
 

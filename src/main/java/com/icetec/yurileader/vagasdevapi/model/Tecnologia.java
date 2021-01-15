@@ -3,6 +3,7 @@ package com.icetec.yurileader.vagasdevapi.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "TECNOLOGIA")
@@ -19,6 +20,7 @@ public class Tecnologia {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @NotNull
     @Column(name = "NOME", nullable = false)
     private String nome;
 }
