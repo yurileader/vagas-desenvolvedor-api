@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,6 +22,7 @@ public class TecnologiaController {
 
     @Autowired
     private TecnologiaRepository tecnologiaRepository;
+
 
     @GetMapping
     public List<Tecnologia> listar() {
@@ -36,7 +38,7 @@ public class TecnologiaController {
     }
 
     @PostMapping
-    public ResponseEntity<Tecnologia> criarTecnologia(@RequestBody Tecnologia tecnologia, HttpServletResponse response) {
+    public ResponseEntity<Tecnologia> criarTecnologia(@Valid @RequestBody Tecnologia tecnologia, HttpServletResponse response) {
         Tecnologia tecnologiaSalva = tecnologiaRepository.save(tecnologia);
 
         publisher.publishEvent(new RecursoCriadoEvent(this, response, tecnologiaSalva.getId()));
