@@ -1,22 +1,25 @@
 package com.icetec.yurileader.vagasdevapi.controller;
 
+import com.icetec.yurileader.vagasdevapi.event.RecursoCriadoEvent;
 import com.icetec.yurileader.vagasdevapi.model.Candidato;
 import com.icetec.yurileader.vagasdevapi.repository.CandidatoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/candidatos")
 public class CandidatoController {
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
     @Autowired
     private CandidatoRepository candidatoRepository;
@@ -30,19 +33,17 @@ public class CandidatoController {
     public ResponseEntity<Candidato> buscarPorId(@PathVariable Long id) {
 
         return candidatoRepository.findById(id)
-                .map(categoria -> ResponseEntity.ok(categoria))
+                .map(candidato -> ResponseEntity.ok(candidato))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Candidato> criar(@Valid @RequestBody Candidato candidato, HttpServletResponse response) {
-        Candidato categoriaSalva = candidatoRepository.save(candidato);
+    public ResponseEntity<Candidato> criarCandidato(@Valid @RequestBody Candidato candidato, HttpServletResponse response) {
+        Candidato candidatoSalvo = candidatoRepository.save(candidato);
 
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
-                .buildAndExpand(categoriaSalva.getId()).toUri();
-        response.setHeader("Location", uri.toASCIIString());
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, candidatoSalvo.getId()));
 
-        return ResponseEntity.created(uri).body(categoriaSalva);
+        return ResponseEntity.status(HttpStatus.CREATED).body(candidatoSalvo);
     }
 
     @PutMapping("/{id}")

@@ -6,7 +6,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Table(name = "CANDIDATO")
@@ -48,11 +47,5 @@ public class Candidato {
     @Size(max = 100)
     @Column(name = "URL_GITHUB")
     private String urlGithub;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "CANDIDATO_TECNOLOGIA", joinColumns = @JoinColumn(name = "ID_CANDIDATO"),
-    inverseJoinColumns = @JoinColumn(name = "ID_TECNOLOGIA"))
-    private List<Tecnologia> tecnologia;
-
 }
 
