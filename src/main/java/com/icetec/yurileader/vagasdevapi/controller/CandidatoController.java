@@ -2,8 +2,10 @@ package com.icetec.yurileader.vagasdevapi.controller;
 
 import com.icetec.yurileader.vagasdevapi.event.RecursoCriadoEvent;
 import com.icetec.yurileader.vagasdevapi.model.Candidato;
+import com.icetec.yurileader.vagasdevapi.model.dto.CandidatoDTO;
 import com.icetec.yurileader.vagasdevapi.repository.CandidatoRepository;
 import com.icetec.yurileader.vagasdevapi.service.CandidatoService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,9 @@ public class CandidatoController {
     @Autowired
     private CandidatoService candidatoService;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @GetMapping
     public List<Candidato> listar() {
         return candidatoRepository.findAll();
@@ -41,7 +46,7 @@ public class CandidatoController {
 
     @PostMapping
     public ResponseEntity<Candidato> criarCandidato(@Valid @RequestBody Candidato candidato, HttpServletResponse response) {
-        Candidato candidatoSalvo = candidatoRepository.save(candidato);
+        Candidato candidatoSalvo = candidatoService.candidatoSalvar(candidato);
 
         publisher.publishEvent(new RecursoCriadoEvent(this, response, candidatoSalvo.getId()));
 
@@ -58,7 +63,11 @@ public class CandidatoController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long id) {
-        candidatoRepository.deleteById(id);
+        candidatoService.candidatoDeletar(id);
+    }
+
+    private CandidatoDTO toDto(Candidato candidato) {
+        return modelMapper.map(candidato, CandidatoDTO.class);
     }
 
 }

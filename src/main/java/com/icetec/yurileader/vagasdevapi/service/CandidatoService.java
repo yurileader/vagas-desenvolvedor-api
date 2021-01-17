@@ -13,10 +13,22 @@ public class CandidatoService {
     @Autowired
     private CandidatoRepository candidatoRepository;
 
+
+    public Candidato candidatoSalvar(Candidato candidato) {
+        Candidato candidatoSalvo = candidatoRepository.save(candidato);
+        return candidatoSalvo;
+    }
+
     public Candidato candidatoAtualizar(Long id, Candidato candidato) {
         Candidato candidatoSalvo = candidatoRepository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
         BeanUtils.copyProperties(candidato, candidatoSalvo, "id");    //copia o candidato para o target(candidatoSalvo) ignorando o "id"
 
         return candidatoRepository.save(candidatoSalvo);
     }
+
+    public void candidatoDeletar(Long id) {
+        candidatoRepository.deleteById(id);
+    }
+
+
 }
