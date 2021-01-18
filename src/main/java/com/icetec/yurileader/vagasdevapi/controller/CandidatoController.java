@@ -1,7 +1,6 @@
 package com.icetec.yurileader.vagasdevapi.controller;
 
 import com.icetec.yurileader.vagasdevapi.event.RecursoCriadoEvent;
-import com.icetec.yurileader.vagasdevapi.model.Candidato;
 import com.icetec.yurileader.vagasdevapi.model.dto.CandidatoDTO;
 import com.icetec.yurileader.vagasdevapi.model.dto.CandidatoListagemDTO;
 import com.icetec.yurileader.vagasdevapi.service.CandidatoService;
@@ -36,8 +35,8 @@ public class CandidatoController {
     }
 
     @PostMapping
-    public ResponseEntity<Candidato> criarCandidato(@Valid @RequestBody Candidato candidato, HttpServletResponse response) {
-        Candidato candidatoSalvo = candidatoService.candidatoSalvar(candidato);
+    public ResponseEntity<CandidatoDTO> criarCandidato(@Valid @RequestBody CandidatoDTO candidatoDTO, HttpServletResponse response) {
+        CandidatoDTO candidatoSalvo = candidatoService.candidatoSalvar(candidatoDTO);
 
         publisher.publishEvent(new RecursoCriadoEvent(this, response, candidatoSalvo.getId()));
 
