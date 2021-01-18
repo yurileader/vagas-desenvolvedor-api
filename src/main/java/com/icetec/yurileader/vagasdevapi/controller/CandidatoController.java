@@ -3,9 +3,8 @@ package com.icetec.yurileader.vagasdevapi.controller;
 import com.icetec.yurileader.vagasdevapi.event.RecursoCriadoEvent;
 import com.icetec.yurileader.vagasdevapi.model.Candidato;
 import com.icetec.yurileader.vagasdevapi.model.dto.CandidatoDTO;
-import com.icetec.yurileader.vagasdevapi.repository.CandidatoRepository;
+import com.icetec.yurileader.vagasdevapi.model.dto.CandidatoListagemDTO;
 import com.icetec.yurileader.vagasdevapi.service.CandidatoService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -24,24 +23,16 @@ public class CandidatoController {
     private ApplicationEventPublisher publisher;
 
     @Autowired
-    private CandidatoRepository candidatoRepository;
-
-    @Autowired
     private CandidatoService candidatoService;
 
-    @Autowired
-    private ModelMapper modelMapper;
-
     @GetMapping
-    public List<Candidato> listar() {
-        return candidatoRepository.findAll();
+    public List<CandidatoDTO> listar() {
+        return candidatoService.listarTodos();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Candidato> buscarPorId(@PathVariable Long id) {
-        return candidatoRepository.findById(id)
-                .map(candidato -> ResponseEntity.ok(candidato))
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<CandidatoListagemDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(candidatoService.listarPorId(id));
     }
 
     @PostMapping
@@ -54,8 +45,8 @@ public class CandidatoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Candidato> atualizar(@Valid @PathVariable Long id, @Valid @RequestBody Candidato candidato) {
-        Candidato candidatoSalvo = candidatoService.candidatoAtualizar(id, candidato);
+    public ResponseEntity<CandidatoDTO> atualizar(@Valid @PathVariable Long id, @Valid @RequestBody CandidatoDTO candidatoDTO) {
+        CandidatoDTO candidatoSalvo = candidatoService.candidatoAtualizar(id, candidatoDTO);
         return ResponseEntity.ok(candidatoSalvo);
     }
 
@@ -66,8 +57,5 @@ public class CandidatoController {
         candidatoService.candidatoDeletar(id);
     }
 
-    private CandidatoDTO toDto(Candidato candidato) {
-        return modelMapper.map(candidato, CandidatoDTO.class);
-    }
 
 }

@@ -1,8 +1,8 @@
 package com.icetec.yurileader.vagasdevapi.controller;
 
 import com.icetec.yurileader.vagasdevapi.event.RecursoCriadoEvent;
-import com.icetec.yurileader.vagasdevapi.model.Tecnologia;
-import com.icetec.yurileader.vagasdevapi.repository.TecnologiaRepository;
+import com.icetec.yurileader.vagasdevapi.model.dto.TecnologiaDTO;
+import com.icetec.yurileader.vagasdevapi.service.TecnologiaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -21,26 +21,24 @@ public class TecnologiaController {
     private ApplicationEventPublisher publisher;
 
     @Autowired
-    private TecnologiaRepository tecnologiaRepository;
+    private TecnologiaService tecnologiaService;
 
 
     @GetMapping
-    public List<Tecnologia> listar() {
-        return tecnologiaRepository.findAll();
+    public List<TecnologiaDTO> listar() {
+        return tecnologiaService.listarTodos();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Tecnologia> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<TecnologiaDTO> buscarPorId(@PathVariable Long id) {
 
-        return tecnologiaRepository.findById(id)
-                .map(tecnologia -> ResponseEntity.ok(tecnologia))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(tecnologiaService.listarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<Tecnologia> criarTecnologia(@Valid @RequestBody Tecnologia tecnologia, HttpServletResponse response) {
-        Tecnologia tecnologiaSalva = tecnologiaRepository.save(tecnologia);
+    public ResponseEntity<TecnologiaDTO> criarTecnologia(@Valid @RequestBody TecnologiaDTO tecnologiaDTO, HttpServletResponse response) {
 
+        TecnologiaDTO tecnologiaSalva = tecnologiaService.tecnologiaSalvar(tecnologiaDTO);
         publisher.publishEvent(new RecursoCriadoEvent(this, response, tecnologiaSalva.getId()));
 
         return ResponseEntity.status(HttpStatus.CREATED).body(tecnologiaSalva);
@@ -49,7 +47,7 @@ public class TecnologiaController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long id) {
-        tecnologiaRepository.deleteById(id);
+        tecnologiaService.tecnologiaDeletar(id);
     }
 
 }

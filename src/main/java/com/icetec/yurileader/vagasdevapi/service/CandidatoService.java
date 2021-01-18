@@ -1,11 +1,17 @@
 package com.icetec.yurileader.vagasdevapi.service;
 
 import com.icetec.yurileader.vagasdevapi.model.Candidato;
+import com.icetec.yurileader.vagasdevapi.model.dto.CandidatoDTO;
+import com.icetec.yurileader.vagasdevapi.model.dto.CandidatoListagemDTO;
 import com.icetec.yurileader.vagasdevapi.repository.CandidatoRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CandidatoService {
@@ -13,22 +19,53 @@ public class CandidatoService {
     @Autowired
     private CandidatoRepository candidatoRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
 
     public Candidato candidatoSalvar(Candidato candidato) {
-        Candidato candidatoSalvo = candidatoRepository.save(candidato);
+
+        return candidatoRepository.save(candidato);
+    }
+
+    public CandidatoDTO candidatoAtualizar(Long id, CandidatoDTO candidatoDTO) {
+        Candidato candidatoSalvo = encontrarCandidato(id);
+        BeanUtils.copyProperties(candidatoDTO, candidatoSalvo, "id");    //copia o candidato para o target(candidatoSalvo) ignorando o "id"
+
+        return toDto(candidatoRepository.save(candidatoSalvo));
+    }
+
+
+    public void candidatoDeletar(Long id) {
+        Candidato candidato = encontrarCandidato(id);
+
+        candidatoRepository.deleteById(candidato.getId());
+    }
+
+    public List<CandidatoDTO> listarTodos(){
+        List<Candidato> candidato = candidatoRepository.findAll();
+        return candidato.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public CandidatoListagemDTO listarPorId(Long id){
+        Candidato candidato = encontrarCandidato(id);
+
+        return modelMapper.map(candidato, CandidatoListagemDTO.class);
+    }
+
+    private Candidato encontrarCandidato(Long id) {
+        Candidato candidatoSalvo = candidatoRepository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
         return candidatoSalvo;
     }
 
-    public Candidato candidatoAtualizar(Long id, Candidato candidato) {
-        Candidato candidatoSalvo = candidatoRepository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
-        BeanUtils.copyProperties(candidato, candidatoSalvo, "id");    //copia o candidato para o target(candidatoSalvo) ignorando o "id"
-
-        return candidatoRepository.save(candidatoSalvo);
+    private CandidatoDTO toDto(Candidato candidato) {
+        return modelMapper.map(candidato, CandidatoDTO.class);
     }
 
-    public void candidatoDeletar(Long id) {
-        candidatoRepository.deleteById(id);
+    private Candidato toEntity(CandidatoDTO candidatoDTO){
+        return modelMapper.map(candidatoDTO, Candidato.class);
     }
-
 
 }
