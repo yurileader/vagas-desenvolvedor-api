@@ -53,11 +53,11 @@ public class VagasDevExeptionHandler extends ResponseEntityExceptionHandler {
         String mensagemDesenvolvedor = ex.toString();
         List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
 
-        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler({EmailDuplicadoException.class})
-    protected ResponseEntity<Object> handleEmailDuplicadoException(EmailDuplicadoException ex, WebRequest request){
+    protected ResponseEntity<Object> handleEmailDuplicadoException(EmailDuplicadoException ex, WebRequest request) {
         String mensagemUsuario = messageSource.getMessage("email.duplicado", null, LocaleContextHolder.getLocale());
         String mensagemDesenvolvedor = ex.toString();
         List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));

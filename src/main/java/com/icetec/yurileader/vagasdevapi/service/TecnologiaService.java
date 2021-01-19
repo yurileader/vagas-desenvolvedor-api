@@ -42,6 +42,7 @@ public class TecnologiaService {
 
     public void tecnologiaDeletar (Long id) {
         Tecnologia tecnologia = encontrarTecnologia(id);
+        tecnologiaRepository.deleteTecnologiaBy(id);
         tecnologiaRepository.deleteById(tecnologia.getId());
     }
 

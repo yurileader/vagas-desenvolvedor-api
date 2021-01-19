@@ -59,11 +59,6 @@ public class CandidatoService {
         return toDto(candidatoSalvo);
     }
 
-    private boolean verificarEmail(Candidato candidato) {
-        Candidato candidatoEmail = candidatoRepository.findByEmail(candidato.getEmail());
-        return !(candidatoEmail == null || candidatoEmail.getId().equals(candidato.getId()));
-    }
-
     public CandidatoDTO candidatoAtualizar(Long id, CandidatoDTO candidatoDTO) {
         Candidato candidatoSalvo = encontrarCandidato(id);
         BeanUtils.copyProperties(candidatoDTO, candidatoSalvo, "id");    //copia o candidato para o target(candidatoSalvo) ignorando o "id"
@@ -75,6 +70,7 @@ public class CandidatoService {
     public void candidatoDeletar(Long id) {
         Candidato candidato = encontrarCandidato(id);
 
+        candidatoRepository.deleteCandidatoById(candidato.getId());
         candidatoRepository.deleteById(candidato.getId());
     }
 
@@ -94,6 +90,11 @@ public class CandidatoService {
     private Candidato encontrarCandidato(Long id) {
         Candidato candidatoSalvo = candidatoRepository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(1));
         return candidatoSalvo;
+    }
+
+    private boolean verificarEmail(Candidato candidato) {
+        Candidato candidatoEmail = candidatoRepository.findByEmail(candidato.getEmail());
+        return !(candidatoEmail == null || candidatoEmail.getId().equals(candidato.getId()));
     }
 
     private CandidatoDTO toDto(Candidato candidato) {
