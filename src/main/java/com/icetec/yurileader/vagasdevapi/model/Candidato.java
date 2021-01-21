@@ -27,8 +27,7 @@ public class Candidato {
     @Column(name = "NOME", nullable = false)
     private String nome;
 
-    @NotNull
-    @Size(max = 100)
+    @Size(min = 5, max = 100)
     @Column(name = "EMAIL", nullable = false)
     private String email;
 

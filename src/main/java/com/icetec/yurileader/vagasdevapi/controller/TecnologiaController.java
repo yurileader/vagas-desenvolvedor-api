@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,17 +26,20 @@ public class TecnologiaController {
 
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_TECNOLOGIA') and #oauth2.hasScope('read')")
     public List<TecnologiaDTO> listar() {
         return tecnologiaService.listarTodos();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_PESQUISAR_TECNOLOGIA') and #oauth2.hasScope('read')")
     public ResponseEntity<TecnologiaDTO> buscarPorId(@PathVariable Long id) {
 
         return ResponseEntity.ok(tecnologiaService.listarPorId(id));
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_CADASTRAR_TECNOLOGIA') and #oauth2.hasScope('write')")
     public ResponseEntity<TecnologiaDTO> criarTecnologia(@Valid @RequestBody TecnologiaDTO tecnologiaDTO, HttpServletResponse response) {
 
         TecnologiaDTO tecnologiaSalva = tecnologiaService.tecnologiaSalvar(tecnologiaDTO);
@@ -45,6 +49,7 @@ public class TecnologiaController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_REMOVER_TECNOLOGIA') and #oauth2.hasScope('write')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir(@PathVariable Long id) {
         tecnologiaService.tecnologiaDeletar(id);

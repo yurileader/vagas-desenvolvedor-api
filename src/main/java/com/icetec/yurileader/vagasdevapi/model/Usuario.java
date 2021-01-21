@@ -36,8 +36,8 @@ public class Usuario {
     @Column(name = "SENHA", nullable = false)
     private String senha;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "USUARIO_PERMISSAO", joinColumns = @JoinColumn(name = "ID_USUARIO")
-            , inverseJoinColumns = @JoinColumn(name = "D_PERMISSAO"))
+            , inverseJoinColumns = @JoinColumn(name = "ID_PERMISSAO"))
     private List<Permissao> permissoes;
 }
